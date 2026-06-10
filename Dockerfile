@@ -1,5 +1,5 @@
 # --- Stage 1: Build React Frontend ---
-FROM node:18-slim AS build-frontend
+FROM node:20-slim AS build-frontend
 WORKDIR /frontend
 COPY frontend/package*.json ./
 RUN npm install
@@ -33,9 +33,11 @@ COPY --from=build-frontend /frontend/dist /app/frontend/dist
 # Ensure database and logs directories exist
 RUN mkdir -p /app/backend/database /app/logs
 
-# Run as non-root user
-RUN useradd -m appuser && chown -R appuser:appuser /app
-USER appuser
+ENV PYTHONPATH=/app
+
+# Run as root to handle volume permissions
+# RUN useradd -m appuser && chown -R appuser:appuser /app
+# USER appuser
 
 EXPOSE 8000
 

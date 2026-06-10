@@ -63,11 +63,17 @@ const Settings: React.FC = () => {
         ))}
       </div>
       <style>{`
-        .settings-list { display: flex; flex-direction: column; gap: 1.5rem; }
-        .setting-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; }
+        .settings-list { display: flex; flex-direction: column; gap: 0.85rem; }
+        .setting-item {
+          display: flex; justify-content: space-between; align-items: center; gap: 2rem;
+          background: var(--card-bg-2); border: 1px solid var(--border-color);
+          border-radius: 12px; padding: 1.1rem 1.25rem; transition: border-color 0.2s;
+        }
+        .setting-item:hover { border-color: var(--border-strong); }
         .setting-info { flex: 1; }
-        .setting-desc { font-size: 0.85rem; color: #666; margin-top: 0.25rem; }
-        .setting-input input { padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc; width: 200px; }
+        .setting-info label strong { font-family: var(--mono); font-size: 0.9rem; color: var(--text-main); }
+        .setting-desc { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem; }
+        .setting-input input { width: 220px; text-align: right; font-family: var(--mono); }
       `}</style>
     </div>
   );

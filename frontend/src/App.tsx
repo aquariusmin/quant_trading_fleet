@@ -27,12 +27,6 @@ const App: React.FC = () => {
       <main className="main-content">
         {activeTab === 'dashboard' ? <Dashboard /> : <Settings />}
       </main>
-      <style>{`
-        .nav-links { display: flex; gap: 1rem; }
-        .nav-link { background: transparent; color: #ccc; border: none; padding: 0.5rem 1rem; font-size: 1rem; }
-        .nav-link:hover { color: white; }
-        .nav-link.active { color: white; border-bottom: 2px solid white; border-radius: 0; }
-      `}</style>
     </div>
   );
 };

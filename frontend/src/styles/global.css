@@ -1,124 +1,222 @@
+/* =========================================================================
+   Quant Trading Fleet — dark "trading desk" design system
+   Class names preserved from the original markup; only the look is upgraded.
+   ========================================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 :root {
-  --primary-color: #2c3e50;
-  --secondary-color: #34495e;
-  --accent-color: #3498db;
-  --success-color: #27ae60;
-  --danger-color: #e74c3c;
-  --bg-color: #f4f7f6;
-  --text-color: #333;
-  --card-bg: #fff;
-  --border-radius: 8px;
-  --shadow: 0 4px 6px rgba(0,0,0,0.1);
+  /* Core palette */
+  --bg: #070b14;
+  --bg-elev: #0d131f;
+  --card-bg: #121a29;
+  --card-bg-2: #182133;
+  --border-color: #232f47;
+  --border-strong: #30405f;
+
+  /* Text */
+  --text-main: #e8eef9;
+  --text-muted: #8593ab;
+  --text-faint: #5a6680;
+
+  /* Brand / accents */
+  --accent-color: #5b8cff;
+  --accent-hover: #7aa2ff;
+  --accent-soft: rgba(91, 140, 255, 0.14);
+  --success-color: #2ecc8f;
+  --success-soft: rgba(46, 204, 143, 0.13);
+  --danger-color: #ff5d6c;
+  --danger-soft: rgba(255, 93, 108, 0.13);
+  --warning-color: #f5b042;
+  --warning-soft: rgba(245, 176, 66, 0.13);
+
+  /* Legacy aliases (still referenced in markup) */
+  --primary-color: var(--text-main);
+  --secondary-color: var(--text-main);
+  --bg-color: var(--bg);
+
+  --border-radius: 16px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.5);
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  line-height: 1.6;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background:
+    radial-gradient(1100px 600px at 85% -8%, #16233f 0%, rgba(22, 35, 63, 0) 55%),
+    radial-gradient(900px 500px at 0% 0%, #161a33 0%, rgba(22, 26, 51, 0) 45%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-.app-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+.app-container { min-height: 100vh; display: flex; flex-direction: column; }
 
+/* ---------------- Navbar ---------------- */
 .navbar {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 1rem 2rem;
+  background: rgba(10, 15, 25, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #fff;
+  padding: 0 2rem;
+  height: 66px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--shadow);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .navbar-brand {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: linear-gradient(90deg, #fff, #aebfe0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.navbar-brand::before {
+  content: '';
+  width: 30px; height: 30px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--accent-color), #9b6bff);
+  box-shadow: 0 0 18px rgba(91, 140, 255, 0.55);
+  -webkit-text-fill-color: initial;
+  display: inline-block;
 }
 
-.main-content {
-  flex: 1;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+.nav-links { display: flex; height: 100%; gap: 0.25rem; }
+
+.nav-link {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  padding: 0 1.25rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+  height: 100%;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+}
+.nav-link:hover { color: #fff; background-color: rgba(255, 255, 255, 0.04); }
+.nav-link.active {
+  color: #fff;
+  border-bottom: 2px solid var(--accent-color);
+  background: linear-gradient(180deg, transparent, var(--accent-soft));
+}
+
+/* ---------------- Layout ---------------- */
+.main-content { flex: 1; padding: 2.25rem 2rem 4rem; max-width: 1440px; margin: 0 auto; width: 100%; }
+
+h1, h2, h3 { letter-spacing: -0.025em; }
+.page-header { margin-bottom: 2rem; }
+.page-title {
+  font-size: 1.95rem; font-weight: 800; color: var(--text-main);
+  background: linear-gradient(90deg, #fff 0%, #b9c6e6 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 1.5rem;
+}
+@media (max-width: 980px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+.loading {
+  display: grid; place-items: center; min-height: 60vh;
+  color: var(--text-muted); font-weight: 600; letter-spacing: 0.02em;
 }
 
+/* ---------------- Cards ---------------- */
 .card {
-  background: var(--card-bg);
+  background: linear-gradient(180deg, var(--card-bg), var(--bg-elev));
   border-radius: var(--border-radius);
   padding: 1.5rem;
+  border: 1px solid var(--border-color);
   box-shadow: var(--shadow);
-  margin-bottom: 2rem;
+  transition: border-color 0.2s, transform 0.2s;
 }
+.card:hover { border-color: var(--border-strong); }
 
 .card-title {
-  font-size: 1.25rem;
-  margin-bottom: 1.5rem;
-  color: var(--secondary-color);
-  border-bottom: 2px solid var(--bg-color);
-  padding-bottom: 0.5rem;
+  font-size: 1.05rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);
+  display: flex; align-items: center; gap: 0.55rem;
+}
+.card-title .icon {
+  display: inline-grid; place-items: center; width: 30px; height: 30px;
+  background: var(--accent-soft); border-radius: 9px; font-size: 0.95rem;
 }
 
+/* ---------------- Buttons ---------------- */
 button {
-  padding: 0.6rem 1.2rem;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: opacity 0.2s;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.6rem 1rem; border-radius: 10px; border: 1px solid transparent;
+  cursor: pointer; font-weight: 700; font-size: 0.85rem; transition: all 0.18s; gap: 0.5rem;
+  font-family: inherit;
 }
+.btn-primary { background-color: var(--accent-color); color: #fff; }
+.btn-primary:hover { background-color: var(--accent-hover); box-shadow: 0 6px 18px var(--accent-soft); }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+.btn-success { background-color: var(--accent-color); color: #fff; border: none; box-shadow: 0 4px 14px var(--accent-soft); }
+.btn-success:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
 
-.btn-primary { background-color: var(--accent-color); color: white; }
-.btn-success { background-color: var(--success-color); color: white; }
-.btn-danger { background-color: var(--danger-color); color: white; }
+.btn-danger { background: var(--danger-soft); color: var(--danger-color); border: 1px solid rgba(255, 93, 108, 0.4); }
+.btn-danger:hover { background-color: var(--danger-color); color: #fff; }
 
+/* ---------------- Status badges ---------------- */
 .status-badge {
-  padding: 0.2rem 0.6rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: bold;
+  padding: 0.28rem 0.7rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 0.4rem;
 }
+.status-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.status-running { background-color: var(--success-soft); color: var(--success-color); border: 1px solid rgba(46, 204, 143, 0.3); }
+.status-stopped { background-color: rgba(133, 147, 171, 0.12); color: var(--text-muted); border: 1px solid var(--border-color); }
+.status-stopped::before { box-shadow: none; }
 
-.status-running { background-color: #d4edda; color: #155724; }
-.status-stopped { background-color: #f8d7da; color: #721c24; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-th, td {
-  text-align: left;
-  padding: 0.75rem;
-  border-bottom: 1px solid #eee;
-}
-
+/* ---------------- Tables ---------------- */
+.table-container { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border-color); }
+table { width: 100%; border-collapse: collapse; }
 th {
-  background-color: #f8f9fa;
-  color: #666;
+  background-color: rgba(255, 255, 255, 0.02);
+  color: var(--text-faint); font-weight: 600; font-size: 0.72rem;
+  text-transform: uppercase; letter-spacing: 0.06em; padding: 0.85rem 1rem;
+  text-align: left; border-bottom: 1px solid var(--border-color);
+}
+td { padding: 0.95rem 1rem; font-size: 0.88rem; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+tr:last-child td { border-bottom: none; }
+tbody tr { transition: background-color 0.15s; }
+tbody tr:hover td { background-color: var(--card-bg-2); }
+
+.trade-buy { color: var(--success-color); font-weight: 700; }
+.trade-sell { color: var(--danger-color); font-weight: 700; }
+
+/* ---------------- Inputs ---------------- */
+input[type="text"], input[type="number"], select {
+  padding: 0.6rem 0.8rem; border-radius: 9px; border: 1px solid var(--border-color);
+  font-size: 0.875rem; width: 100%; transition: border-color 0.2s, box-shadow 0.2s;
+  background: var(--bg-elev); color: var(--text-main); font-family: inherit;
+}
+input::placeholder { color: var(--text-faint); }
+input:focus, select:focus {
+  outline: none; border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
-.trade-buy { color: var(--success-color); font-weight: bold; }
-.trade-sell { color: var(--danger-color); font-weight: bold; }
+/* Scrollbar polish */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; border: 2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: #3d4f70; }
