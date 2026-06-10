@@ -1,4 +1,4 @@
-import datetime
+import time
 import pandas as pd
 from typing import List
 from brokers.binance_broker import BinanceBroker
@@ -20,6 +20,8 @@ class DualMomentumBot:
         """
         try:
             df = self.broker.get_ohlcv(symbol, timeframe='1d', limit=self.lookback_days + 1)
+            if df is None or len(df) < 2:
+                return -999.0
             start_price = df.iloc[0]['close']
             end_price = df.iloc[-1]['close']
             momentum = (end_price - start_price) / start_price
@@ -40,26 +42,58 @@ class DualMomentumBot:
             momentum_scores[symbol] = score
             logger.info(f"Momentum for {symbol}: {score:.4f}")
 
+        # Remove assets that failed to calculate
+        valid_scores = {k: v for k, v in momentum_scores.items() if v != -999.0}
+        
+        if not valid_scores:
+            logger.error("Failed to calculate momentum for all risk assets. Aborting rebalance.")
+            return
+
         # Find asset with highest momentum
-        best_asset = max(momentum_scores, key=momentum_scores.get)
-        highest_score = momentum_scores[best_asset]
+        best_asset = max(valid_scores, key=valid_scores.get)
+        highest_score = valid_scores[best_asset]
 
         # Dual Momentum Logic:
         # 1. Relative Momentum: Pick the best among risk assets.
         # 2. Absolute Momentum: If the best is negative, go to safe asset.
-        
         target_asset = best_asset if highest_score > 0 else self.safe_asset
         logger.info(f"Target asset for this period: {target_asset}")
 
-        # Logic for execution:
-        # In a real production bot, you would:
-        # 1. Fetch current balance.
-        # 2. Sell current holdings that are not target_asset.
-        # 3. Buy target_asset with available capital.
-        
-        # NOTE: For brevity, this bot logs the decision. 
-        # Integration with self.broker.place_market_order would happen here.
-        logger.info(f"REBALANCE ACTION: Switch all capital to {target_asset}")
+        # Execute rebalance
+        try:
+            # 1. Close all holdings that are not the target asset
+            all_assets = self.risk_assets + [self.safe_asset]
+            for asset in all_assets:
+                if asset != target_asset:
+                    self.broker.close_all_positions(asset)
+            
+            # Short wait for orders to settle
+            time.sleep(2)
+            
+            # 2. Check if we already hold the target asset
+            current_qty = self.broker.get_position_qty(target_asset)
+            if current_qty > 0:
+                logger.info(f"Already holding {target_asset}. Rebalance complete.")
+                return
+                
+            # 3. Get available USDT balance (using 95% to avoid margin errors)
+            balance = self.broker.exchange.fetch_balance()
+            free_usdt = float(balance.get('USDT', {}).get('free', 0.0))
+            invest_amount = free_usdt * 0.95
+            
+            if invest_amount < 10.0:  # Arbitrary min limit for futures
+                logger.warning(f"Insufficient available USDT ({free_usdt}) to buy {target_asset}.")
+                return
+                
+            # 4. Buy target asset
+            current_price = self.broker.get_ticker_price(target_asset)
+            target_qty = invest_amount / current_price
+            
+            logger.info(f"REBALANCE ACTION: Switching capital to {target_asset}. Buying {target_qty} units.")
+            self.broker.place_market_order(target_asset, 'buy', target_qty)
+            
+        except Exception as e:
+            logger.error(f"Error during rebalance execution: {e}")
 
 if __name__ == "__main__":
     assets = ["BTC/USDT", "ETH/USDT", "SOL/USDT"]
