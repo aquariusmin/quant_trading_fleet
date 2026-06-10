@@ -1,0 +1,42 @@
+services:
+  # KOSPI Bot (Samsung Electronics)
+  kospi_bot:
+    build: .
+    container_name: quant_kospi
+    restart: always
+    env_file: .env
+    volumes:
+      - ./logs:/app/logs
+    command: python strategies/universal_breakout.py kis 005930 false
+
+  # Crypto Bot (BTC/USDT)
+  crypto_breakout_bot:
+    build: .
+    container_name: quant_crypto_breakout
+    restart: always
+    env_file: .env
+    volumes:
+      - ./logs:/app/logs
+    command: python strategies/universal_breakout.py binance BTC/USDT false
+
+  # US Stock Bot (Apple)
+  us_stock_bot:
+    build: .
+    container_name: quant_us_stock
+    restart: always
+    env_file: .env
+    volumes:
+      - ./logs:/app/logs
+    command: python strategies/universal_breakout.py kis AAPL true
+
+  long_term_bot:
+    build: .
+    container_name: quant_long_term
+    env_file: .env
+    volumes:
+      - ./logs:/app/logs
+    # This bot is intended to be run via cron, 
+    # but can be triggered manually via: docker-compose run long_term_bot
+    command: python strategies/dual_momentum.py
+    # We keep it as a service that exits immediately
+    restart: "no"
